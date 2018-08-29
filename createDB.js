@@ -1,36 +1,47 @@
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
+const mongoose = require('mongoose');
+const config = require('./config');
 
-// Connection URL
-const url = 'mongodb://localhost:27017';
 
-// Database Name
-const dbName = 'test';
+// test using mongoose
+// use db.cats.find() - to find data in MongoDB
+mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'));
 
-// test insertion
-const insertDocuments = function(db, callback) {
-  // Get the documents collection
-  const collection = db.collection('documents');
-  // Insert some documents
-  collection.insertMany([
-    {a : 1}, {a : 2}, {a : 3}
-  ], function(err, result) {
-    assert.equal(err, null);
-    assert.equal(3, result.result.n);
-    assert.equal(3, result.ops.length);
-    console.log("Inserted 3 documents into the collection");
-    callback(result);
-  });
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+  console.log(mongoose.connection.name);
+});
+
+var kittySchema = new mongoose.Schema({
+  name: String
+});
+
+kittySchema.methods.speak = function () {
+  var greeting = this.name
+    ? "Meow name is " + this.name
+    : "I don't have a name";
+  console.log(greeting);
 };
 
-// Use connect method to connect to the server
-MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
-  
-  const db = client.db(dbName);
-  
-  insertDocuments(db, function() {
-    client.close();
-  });
+// model name is "Cat", so in MongoDB creates "cats" collection
+const Cat = mongoose.model('Cat', kittySchema);
+
+
+const kitty = new Cat({ name: 'Zildjian' });
+console.log(kitty.name);
+
+const fluffy = new Cat({ name: 'fluffy' });
+fluffy.speak();
+
+kitty.save().then(() => console.log('meow'));
+
+fluffy.save(function (err, fluffy) {
+  if (err) return console.error(err);
+  fluffy.speak();
+});
+
+Cat.find(function (err, kittens) {
+  if (err) return console.error(err);
+  console.log(kittens);
 });
