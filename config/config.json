@@ -1,7 +1,7 @@
 {
   "port": 3000,
   "mongoose": {
-    "uri": "mongodb://localhost/test",
+    "uri": "mongodb://localhost/testme",
     "options": {
       "useNewUrlParser": true,
       "keepAlive": 1

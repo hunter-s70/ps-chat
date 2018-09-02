@@ -1,47 +1,45 @@
-const mongoose = require('mongoose');
-const config = require('./config');
+var mongoose = require('libs/mongoose');
+var async = require('async');
 
-
-// test using mongoose
-// use db.cats.find() - to find data in MongoDB
-mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'));
-
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  // we're connected!
-  console.log(mongoose.connection.name);
+async.series([
+  open,
+  dropDatabase,
+  requireModels,
+  createUsers
+], function(err) {
+  console.log(arguments);
+  mongoose.disconnect();
+  process.exit(err ? 255 : 0);
 });
 
-var kittySchema = new mongoose.Schema({
-  name: String
-});
 
-kittySchema.methods.speak = function () {
-  var greeting = this.name
-    ? "Meow name is " + this.name
-    : "I don't have a name";
-  console.log(greeting);
-};
+function open(callback) {
+  mongoose.connection.on('open', callback);
+}
 
-// model name is "Cat", so in MongoDB creates "cats" collection
-const Cat = mongoose.model('Cat', kittySchema);
+function dropDatabase(callback) {
+  var db = mongoose.connection.db;
+  db.dropDatabase(callback);
+}
 
+function requireModels(callback) {
+  require('models/user');
+  
+  async.each(Object.keys(mongoose.models), function(modelName, callback) {
+    mongoose.models[modelName].createIndexes(callback);
+  }, callback);
+}
 
-const kitty = new Cat({ name: 'Zildjian' });
-console.log(kitty.name);
-
-const fluffy = new Cat({ name: 'fluffy' });
-fluffy.speak();
-
-kitty.save().then(() => console.log('meow'));
-
-fluffy.save(function (err, fluffy) {
-  if (err) return console.error(err);
-  fluffy.speak();
-});
-
-Cat.find(function (err, kittens) {
-  if (err) return console.error(err);
-  console.log(kittens);
-});
+function createUsers(callback) {
+  
+  var users = [
+    {username: 'Вася', password: 'supervasya'},
+    {username: 'Петя', password: '123'},
+    {username: 'admin', password: 'thetruehero'}
+  ];
+  
+  async.each(users, function(userData, callback) {
+    var user = new mongoose.models.User(userData);
+    user.save(callback);
+  }, callback);
+}

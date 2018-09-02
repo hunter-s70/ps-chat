@@ -1,0 +1,2 @@
+for windows:
+use `set NODE_PATH=.` to find require('libs/mongoose') not require('./libs/mongoose')
