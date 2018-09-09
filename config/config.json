@@ -6,5 +6,16 @@
       "useNewUrlParser": true,
       "keepAlive": 1
     }
+  },
+  "session": {
+    "secret": "KillerIsJim",
+    "name": "session",
+    "resave": false,
+    "saveUninitialized": true,
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "maxAge": null
+    }
   }
 }
