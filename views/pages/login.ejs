@@ -6,11 +6,11 @@
 <form class="login-form pb-3" name="login-form">
     <div class="form-group">
         <label for="username">User name</label>
-        <input type="text" class="form-control" id="username" placeholder="User name">
+        <input name="username" value="name" type="text" class="form-control" id="username" placeholder="User name">
     </div>
     <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Password" aria-describedby="passHelp">
+        <input name="password" value="pass" type="password" class="form-control" id="password" placeholder="Password" aria-describedby="passHelp">
         <small id="passHelp" class="form-text text-muted">We'll never share your password with anyone else.</small>
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
@@ -18,30 +18,32 @@
 </form>
 
 <script>
-  $(document.forms['login-form']).on('submit', function() {
-    var form = $(this);
+    $(function() {
+      $(document.forms['login-form']).on('submit', function() {
+        var form = $(this);
 
-    $('.error', form).html('');
-    $(":submit", form).button("loading");
+        $('.error', form).html('');
+        $(":submit", form).button("loading");
 
-    $.ajax({
-      url: "/login",
-      method: "POST",
-      data: form.serialize(),
-      complete: function() {
-        $(":submit", form).button("reset");
-      },
-      statusCode: {
-        200: function() {
-          form.html("Вы вошли в сайт").addClass('alert-success');
-          window.location.href = "/chat";
-        },
-        403: function(jqXHR) {
-          var error = JSON.parse(jqXHR.responseText);
-          $('.error', form).html(error.message);
-        }
-      }
-    });
-    return false;
-  });
+        $.ajax({
+          url: "/login",
+          method: "POST",
+          data: form.serialize(),
+          complete: function() {
+            $(":submit", form).button("reset");
+          },
+          statusCode: {
+            200: function() {
+              form.html("Вы вошли в сайт").addClass('alert-success');
+              window.location.href = "/chat";
+            },
+            403: function(jqXHR) {
+              var error = JSON.parse(jqXHR.responseText);
+              $('.error', form).html(error.message);
+            }
+          }
+        });
+        return false;
+      });
+    })
 </script>
