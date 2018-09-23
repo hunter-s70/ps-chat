@@ -16,6 +16,7 @@ var MongoStore = require('connect-mongo')(session); // to save session in DB
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
+var logoutRouter = require('./routes/logout');
 var chatRouter = require('./routes/chat');
 
 var app = express();
@@ -40,9 +41,12 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(require('middleware/loadUser'));
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
 app.use('/chat', chatRouter);
 
 // catch 404 and forward to error handler

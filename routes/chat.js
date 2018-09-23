@@ -1,9 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var checkAuth = require('middleware/checkAuth');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('pages/chat', { title: 'Express' });
+/* GET chat page. */
+// using middleware in route. checkAuth
+router.get('/', checkAuth, function(req, res, next) {
+  res.render('pages/chat', {
+    title: 'Express',
+    user: req.user
+  });
 });
 
 module.exports = router;
