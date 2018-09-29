@@ -5,10 +5,33 @@
 <span>User id: </span><%= user.get('username') %>
 
 <script src="/socket.io/socket.io.js"></script>
+
+<div id="room" class="mb-4">
+  <ul class="message-cont"></ul>
+  <form>
+    <input class="form-control" autocomplete="off" autofocus type="text" placeholder="Type a message">
+  </form>
+</div>
+
 <script>
-  var socket = io();
-  socket.on('new message', function(msg){
-    console.log(msg);
-    socket.emit('chat message', {my: 'data'});
+  $(function() {
+    var socket = io();
+    var form = $('#room form');
+    var messageCont = $('.message-cont');
+
+    form.on('submit', function() {
+      var messageInput = $(this).find(':input');
+      var msg = messageInput.val();
+
+      messageInput.val('');
+      socket.emit('message', msg, function() {
+        $('<li />', {text: msg}).appendTo(messageCont);
+      });
+      return false;
+    });
+
+    socket.on('new message', function(msg){
+      $('<li />', {text: msg}).appendTo(messageCont);
+    });
   });
 </script>

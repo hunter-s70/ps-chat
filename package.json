@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "node ./bin/www",
-    "start": "cross-env NODE_PATH=. supervisor bin/www"
+    "start": "node ./bin/www",
+    "dev": "cross-env NODE_PATH=. supervisor bin/www"
   },
   "dependencies": {
     "async": "^2.6.1",
