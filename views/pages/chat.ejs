@@ -3,3 +3,12 @@
 
 <p>Hello in chat</p>
 <span>User id: </span><%= user.get('username') %>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+  socket.on('new message', function(msg){
+    console.log(msg);
+    socket.emit('chat message', {my: 'data'});
+  });
+</script>
