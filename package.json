@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "dev": "node ./bin/www",
+    "start": "cross-env NODE_PATH=. supervisor bin/www"
   },
   "dependencies": {
     "async": "^2.6.1",
     "body-parser": "^1.18.3",
     "connect-mongo": "^2.0.1",
     "cookie-parser": "~1.4.3",
+    "cross-env": "^5.2.0",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
     "ejs-locals": "^1.0.2",
