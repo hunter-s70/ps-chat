@@ -8,30 +8,61 @@
 
 <div id="room" class="mb-4">
   <ul class="message-cont"></ul>
-  <form>
-    <input class="form-control" autocomplete="off" autofocus type="text" placeholder="Type a message">
+  <form class="message-form">
+    <input class="form-control message-input" autocomplete="off" autofocus type="text" placeholder="Type a message">
   </form>
 </div>
 
 <script>
   $(function() {
-    var socket = io();
-    var form = $('#room form');
+    var form = $('.message-form');
     var messageCont = $('.message-cont');
+    var messageInput = $('.message-input');
+    var socket = io('', {
+      reconnectionDelay : 600,
+      reconnection: true
+    });
 
-    form.on('submit', function() {
-      var messageInput = $(this).find(':input');
+    socket
+      .on('new message', function(msg){
+        printMessage(msg);
+      })
+      .on('connect', function() {
+        printStatus('connect to the server');
+        form.on('submit', sendMessage);
+        messageInput.prop('disabled', false);
+      })
+      .on('disconnect', function() {
+        printStatus('disconnect from the server');
+        form.off('submit', sendMessage);
+        messageInput.prop('disabled', true);
+      }).on('reconnect_failed', function() {
+        // after reconnection socket.io try to connect (infinity attempts by default)
+        alert('reconnect failed, reload the page!');
+      });
+
+    function sendMessage() {
       var msg = messageInput.val();
 
-      messageInput.val('');
       socket.emit('message', msg, function() {
-        $('<li />', {text: msg}).appendTo(messageCont);
+        printMessage(msg);
       });
+      messageInput.val('');
       return false;
-    });
+    }
 
-    socket.on('new message', function(msg){
+    function printMessage(msg) {
       $('<li />', {text: msg}).appendTo(messageCont);
-    });
+    }
+
+    function printStatus(msg) {
+      $('<li />', {
+        text: msg,
+        css: {
+          color: 'red',
+          fontWeight: 'bold',
+          fontStyle: 'italic'}
+      }).appendTo(messageCont);
+    }
   });
 </script>

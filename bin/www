@@ -26,16 +26,7 @@ var server = http.createServer(app);
  * Run Socket.io.
  */
 
-var io = require('socket.io')(server);
-io.on('connection', function(socket) {
-  socket.on('message', function(msg, callback) {
-    socket.broadcast.emit('new message', msg); // send to all connections except current
-    callback('sended-data');
-  });
-  socket.on('disconnect', function() {
-    console.log('user disconnected');
-  });
-});
+require('socket')(server);
 
 /**
  * Listen on provided port, on all network interfaces.
