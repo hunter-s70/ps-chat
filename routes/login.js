@@ -6,7 +6,7 @@ var router = express.Router();
 
 /* GET login page. */
 router.get('/', function(req, res, next) {
-  res.render('pages/login', { title: 'Express' });
+  res.render('pages/login');
 });
 
 router.post('/', function(req, res, next) {

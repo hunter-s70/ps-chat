@@ -6,7 +6,6 @@ var checkAuth = require('middleware/checkAuth');
 // using middleware in route. checkAuth
 router.get('/', checkAuth, function(req, res, next) {
   res.render('pages/chat', {
-    title: 'Express',
     user: req.user
   });
 });
