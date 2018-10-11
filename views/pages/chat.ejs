@@ -24,13 +24,22 @@
     });
 
     socket
-      .on('new message', function(msg){
-        printMessage(msg);
+      .on('new message', function(username, msg){
+        printMessage(username, msg);
+      })
+      .on('join', function(username){
+        printMessage(username, 'joined the chat');
+      })
+      .on('leave', function(username){
+        printMessage(username, 'leave the chat');
       })
       .on('connect', function() {
         printStatus('connect to the server');
         form.on('submit', sendMessage);
         messageInput.prop('disabled', false);
+      })
+      .on('logout', function(){
+        location.href = '/';
       })
       .on('disconnect', function() {
         printStatus('disconnect from the server');
@@ -39,20 +48,25 @@
       }).on('reconnect_failed', function() {
         // after reconnection socket.io try to connect (infinity attempts by default)
         alert('reconnect failed, reload the page!');
+      })
+      .on('error', function(err){
+        printStatus(err);
+        form.off('submit', sendMessage);
+        messageInput.prop('disabled', true);
       });
 
     function sendMessage() {
       var msg = messageInput.val();
 
       socket.emit('message', msg, function() {
-        printMessage(msg);
+        printMessage('me', msg);
       });
       messageInput.val('');
       return false;
     }
 
-    function printMessage(msg) {
-      $('<li />', {text: msg}).appendTo(messageCont);
+    function printMessage(username, msg) {
+      $('<li />', {text: `${username} > ${msg}`}).appendTo(messageCont);
     }
 
     function printStatus(msg) {

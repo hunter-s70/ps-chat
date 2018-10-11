@@ -9,8 +9,7 @@ var HttpError = require('error').HttpError;
 // sessions settings
 var session = require('express-session');
 var config = require('config');
-var mongoose = require('libs/mongoose');
-var MongoStore = require('connect-mongo')(session); // to save session in DB
+var sessionStore = require('libs/sessionStore');
 
 
 var app = express();
@@ -32,7 +31,7 @@ app.use(session({
   resave: config.get('session:resave'),
   saveUninitialized: config.get('session:saveUninitialized'),
   cookie: config.get('session:cookie'),
-  store: new MongoStore({mongooseConnection: mongoose.connection})
+  store: sessionStore
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
