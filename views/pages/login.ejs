@@ -6,11 +6,11 @@
 <form class="login-form pb-3" name="login-form">
     <div class="form-group">
         <label for="username">User name</label>
-        <input name="username" value="name" type="text" class="form-control" id="username" placeholder="User name">
+        <input name="username" type="text" class="form-control" id="username" placeholder="User name">
     </div>
     <div class="form-group">
         <label for="password">Password</label>
-        <input name="password" value="pass" type="password" class="form-control" id="password" placeholder="Password" aria-describedby="passHelp">
+        <input name="password" type="password" class="form-control" id="password" placeholder="Password" aria-describedby="passHelp">
         <small id="passHelp" class="form-text text-muted">We'll never share your password with anyone else.</small>
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
@@ -34,7 +34,7 @@
           },
           statusCode: {
             200: function() {
-              form.html("Вы вошли в сайт").addClass('alert-success');
+              form.html("You signed in").addClass('alert-success');
               window.location.href = "/chat";
             },
             403: function(jqXHR) {

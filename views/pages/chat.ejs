@@ -1,13 +1,14 @@
 <% layout('\\layout\\layout'); -%>
 <% block('title', 'Chat page'); %>
 
-<p>Hello in chat</p>
-<span><strong>User name: </strong></span><%= user.get('username') %>
-
 <script src="/socket.io/socket.io.js"></script>
 
-<div id="room" class="mb-4">
-  <ul class="message-cont"></ul>
+<div class="mb-1">
+  <span><b>Your name: </b><%= user.get('username') %></span>
+</div>
+
+<div class="room">
+  <ul class="message-cont p-0"></ul>
   <form class="message-form">
     <input class="form-control message-input" autocomplete="off" autofocus type="text" placeholder="Type a message">
   </form>
@@ -59,21 +60,25 @@
       var msg = messageInput.val();
 
       socket.emit('message', msg, function() {
-        printMessage('me', msg);
+        printMessage('me', msg, true);
       });
       messageInput.val('');
       return false;
     }
 
-    function printMessage(username, msg) {
-      $('<li />', {text: `${username} > ${msg}`}).appendTo(messageCont);
+    function printMessage(username, msg, state) {
+      $('<li />', {
+        text: state ? `${username} > ${msg}` : `${msg} < ${username}`,
+        class: state ? 'outcoming' : 'incoming'
+      }).appendTo(messageCont);
     }
 
     function printStatus(msg) {
       $('<li />', {
         text: msg,
         css: {
-          color: 'red',
+          textAlign: 'center',
+          color: '#d25b5b',
           fontWeight: 'bold',
           fontStyle: 'italic'}
       }).appendTo(messageCont);
