@@ -1,8 +1,8 @@
 var config = require('config');
 var async = require('async');
-var connect = require('connect');
 var cookie = require('cookie');
-var sessionStore = require('lib/sessionStore');
+var cookieParser = require('cookie-parser');
+var sessionStore = require('libs/sessionStore');
 var HttpError = require('error').HttpError;
 var User = require('models/user').User;
 
@@ -10,6 +10,7 @@ var User = require('models/user').User;
 function loadSession(sid, callback) {
   // sessionStore callback is not quite async-style!
   sessionStore.load(sid, function(err, session) {
+    // console.log(session);
     if (arguments.length == 0) {
       // no arguments => no session
       return callback(null, null);
@@ -25,7 +26,7 @@ function loadUser(session, callback) {
     return callback(null, null);
   }
   // log.debug("retrieving user ", session.user);
-  
+
   User.findById(session.user, function(err, user) {
     if (err) return callback(err);
     
@@ -44,22 +45,24 @@ module.exports = function(server) {
   // socket.io configuration
   io.set('origins', 'localhost:*');
   // io.set('logger', log);
+  
+  io.use(function(socket, next) {
+    var handshake = socket.handshake;
 
-  io.set('authorization', function(handshake, callback) {
     async.waterfall([
       function(callback) {
         // convert handshake to the object
         handshake.cookies = cookie.parse(handshake.headers.cookie || '');
         var sidCookie = handshake.cookies[config.get('session:name')];
-        var sid = connect.utils.parseSignedCookie(sidCookie, config.get('session:secret'));
-  
-        loadSession(sid, callback);
+        var sid = cookieParser.signedCookies({sidCookie}, config.get('session:secret'));
+      
+        loadSession(sid.sidCookie, callback);
       },
       function(session, callback) {
         if (!session) {
           callback(new HttpError(401, "No session"));
         }
-  
+      
         handshake.session = session;
         loadUser(session, callback);
       },
@@ -67,20 +70,20 @@ module.exports = function(server) {
         if (!user) {
           callback(new HttpError(403, "Anonymous session may not connect"));
         }
-    
+      
         handshake.user = user;
         callback(null);
       }
     ], function(err) {
       if (!err) {
-        return callback(null, true);
+        return next();
       }
-  
+    
       if (err instanceof HttpError) {
-        return callback(null, false);
+        return next(err);
       }
   
-      callback(err);
+      next(err);
     });
   });
 
