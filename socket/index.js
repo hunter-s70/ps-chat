@@ -87,9 +87,10 @@ module.exports = function(server) {
     });
   });
 
+  // can't emit this event with $emit (deprecated)
   io.sockets.on('session:reload', function(sid) {
     var clients = io.sockets.clients();
-    
+
     clients.forEach(function(client) {
       if (client.handshake.session.id != sid) return;
       
