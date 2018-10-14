@@ -2,6 +2,7 @@
 
 Node js &amp; socket.io chat
 Using technologies: Node.js, socket.io, mongoDB, mongoose.js, express.js
+
 Demo on: https://ps-chat-app.herokuapp.com
 
 # To run project locally:
