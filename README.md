@@ -1,7 +1,11 @@
 # ps-chat
-node js &amp; socket.io chat
 
-To run project locally:
+Node js &amp; socket.io chat
+Using technologies: Node.js, socket.io, mongoDB, mongoose.js, express.js
+Demo on: https://ps-chat-app.herokuapp.com
+
+# To run project locally:
+You need to have Node.js, npm, MongoDB installed
 
 1. Clone repo
 ```
@@ -30,16 +34,16 @@ mongod
 mongo
 ```
 
-5. Run the project
+5. Run the project (cross-platform)
 ```
 npm run dev
 ```
 
-5*. Set NODE_PATH for Windows (if need)
+5'. Or set NODE_PATH for Windows (if need)
 ```
 set NODE_PATH=.
 ```
-and run 
+run for development
 ```
 supervisor bin/www
 ```
