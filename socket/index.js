@@ -40,7 +40,7 @@ function loadUser(session, callback) {
 }
 
 module.exports = function(server) {
-  var io = require('socket.io')(server);
+  var io = require('socket.io').listen(server);
 
   // socket.io configuration
   io.set('origins', 'localhost:*');
